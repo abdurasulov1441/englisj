@@ -1,4 +1,4 @@
-import 'package:english/home_screen.dart';
+import 'package:english/pages/home_screen.dart';
 import 'package:english/services/firebase_streem.dart';
 import 'package:go_router/go_router.dart';
 
@@ -29,7 +29,7 @@ final router = GoRouter(
     GoRoute(
       path: Routes.home,
       builder: (context, state) {
-        return const HomeScreen();
+        return HomeScreen();
       },
     ),
   ],

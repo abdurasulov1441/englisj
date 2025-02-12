@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:english/home_screen.dart';
+import 'package:english/pages/home_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -67,7 +67,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
 
   @override
   Widget build(BuildContext context) => isEmailVerified
-      ? const HomeScreen()
+      ?  HomeScreen()
       : Scaffold(
           resizeToAvoidBottomInset: false,
           appBar: AppBar(

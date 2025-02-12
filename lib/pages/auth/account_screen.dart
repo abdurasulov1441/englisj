@@ -3,8 +3,6 @@ import 'package:english/common/style/app_style.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-
-
 class AccountScreen extends StatefulWidget {
   const AccountScreen({super.key});
 
@@ -29,7 +27,7 @@ class _AccountScreenState extends State<AccountScreen> {
       backgroundColor: AppColors.backgroundColor,
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        backgroundColor: AppColors.headerColor,
+        backgroundColor: AppColors.backgroundColor,
         leading: IconButton(
           onPressed: () {
             Navigator.pop(context);

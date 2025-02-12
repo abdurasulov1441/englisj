@@ -1,4 +1,4 @@
-import 'package:english/home_screen.dart';
+import 'package:english/pages/home_screen.dart';
 import 'package:english/pages/auth/verify_email_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -18,9 +18,9 @@ class FirebaseStream extends StatelessWidget {
           if (!snapshot.data!.emailVerified) {
             return const VerifyEmailScreen();
           }
-          return const HomeScreen();
+          return  HomeScreen();
         } else {
-          return const HomeScreen();
+          return  HomeScreen();
         }
       },
     );
