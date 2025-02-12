@@ -131,7 +131,6 @@ class HomeScreen extends StatelessWidget {
                                       style: AppStyle.fontStyle,
                                     ),
                                     onTap: () {
-                                      context.pop(context);
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
@@ -153,7 +152,6 @@ class HomeScreen extends StatelessWidget {
                                       style: AppStyle.fontStyle,
                                     ),
                                     onTap: () {
-                                      context.pop(context);
                                       _showDeleteConfirmationDialog(
                                           context, file.id);
                                     },
