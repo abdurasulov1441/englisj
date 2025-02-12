@@ -25,6 +25,8 @@ dependencies:
   flutter_svg: ^2.0.17
   icons_launcher: ^3.0.0
   google_sign_in: ^6.2.2
+  flip_card_swiper: ^1.0.0
+  swipeable_card_stack: ^0.0.5
 
 dev_dependencies:
   flutter_test:

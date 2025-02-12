@@ -2,6 +2,7 @@ import 'package:english/pages/auth/login_screen.dart';
 import 'package:english/pages/auth/reset_password_screen.dart';
 import 'package:english/pages/auth/signup_screen.dart';
 import 'package:english/pages/home_screen.dart';
+import 'package:english/pages/quiz_page/quiz_page.dart';
 import 'package:english/services/firebase_streem.dart';
 import 'package:go_router/go_router.dart';
 
@@ -11,6 +12,7 @@ abstract final class Routes {
   static const loginPage = '/loginPage';
   static const resetPasswordPage = '/resetPasswordPage';
   static const signUpPage = '/signUpPage';
+  static const quizAppPage = '/quizAppPage';
 }
 
 String _initialLocation() {
@@ -53,6 +55,12 @@ final router = GoRouter(
       path: Routes.signUpPage,
       builder: (context, state) {
         return SignUpScreen();
+      },
+    ),
+    GoRoute(
+      path: Routes.quizAppPage,
+      builder: (context, state) {
+        return QuizPage();
       },
     ),
   ],

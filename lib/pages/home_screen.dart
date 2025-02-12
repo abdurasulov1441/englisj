@@ -20,6 +20,13 @@ class HomeScreen extends StatelessWidget {
       return LoginScreen();
     }
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(50),
+          ),
+          onPressed: () {
+            context.go(Routes.quizAppPage);
+          }),
       backgroundColor: AppColors.backgroundColor,
       appBar: AppBar(
         actions: [
