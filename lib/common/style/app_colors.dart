@@ -10,6 +10,8 @@ abstract class AppColors {
   static const saveButtonColor = Color(0xFF00C81E);
   static const wordHeaderTextColor = Color(0xFF0064A2);
   static const orange = Color(0xFFF28500);
+  static const greenTextColor = Color(0xFF00F234);
+  static const darkGreenColor = Color(0xFF00A437);
 
   static const dividerColor = Color.fromARGB(255, 131, 131, 131);
   static const iconColor = Color.fromARGB(255, 219, 34, 35);

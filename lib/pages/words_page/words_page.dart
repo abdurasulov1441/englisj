@@ -1,6 +1,7 @@
 import 'package:english/common/style/app_colors.dart';
 import 'package:english/common/style/app_style.dart';
 import 'package:english/pages/add_words_page/add_words_page.dart';
+import 'package:english/pages/word_view_page/word_view_page.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_svg/svg.dart';
@@ -116,78 +117,6 @@ class WordsScreen extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class WordViewPage extends StatelessWidget {
-  final String rule;
-  final String comment;
-  final List<Map<String, dynamic>> examples;
-
-  WordViewPage({
-    required this.rule,
-    required this.comment,
-    required this.examples,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: SvgPicture.asset('assets/icons/arrow_back.svg'),
-          onPressed: () => Navigator.pop(context),
-        ),
-        centerTitle: true,
-        title: Text(
-          'Word Details',
-          style: AppStyle.fontStyle.copyWith(
-            fontSize: 20,
-            color: AppColors.appBarTextColor,
-          ),
-        ),
-      ),
-      body: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Rule:',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            Text(rule, style: TextStyle(fontSize: 18)),
-            SizedBox(height: 10),
-            Text(
-              'Comment:',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            Text(comment, style: TextStyle(fontSize: 18)),
-            SizedBox(height: 10),
-            Text(
-              'Examples:',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            ...examples.map((example) => Padding(
-                  padding: const EdgeInsets.only(top: 5),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'EN: ${example['english']}',
-                        style: TextStyle(fontSize: 16, color: Colors.blue),
-                      ),
-                      Text(
-                        'UZ: ${example['uzbek']}',
-                        style: TextStyle(fontSize: 16, color: Colors.green),
-                      ),
-                    ],
-                  ),
-                )),
-          ],
-        ),
       ),
     );
   }
