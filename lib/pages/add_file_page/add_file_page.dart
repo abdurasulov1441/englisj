@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:english/common/style/app_colors.dart';
 import 'package:english/common/style/app_style.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 
 class AddFilePage extends StatelessWidget {
   final TextEditingController _controller = TextEditingController();
@@ -17,6 +19,7 @@ class AddFilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
     return Scaffold(
       backgroundColor: AppColors.backgroundColor,
       appBar: AppBar(
@@ -25,7 +28,7 @@ class AddFilePage extends StatelessWidget {
           padding: const EdgeInsets.all(8.0),
           child: GestureDetector(
             onTap: () {
-              Navigator.pop(context);
+              context.pop(context);
             },
             child: SvgPicture.asset('assets/icons/arrow_back.svg'),
           ),
@@ -64,17 +67,28 @@ class AddFilePage extends StatelessWidget {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
+                  if (user == null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text("User not authenticated")),
+                    );
+                    return;
+                  }
+
                   if (editFileId == null) {
-                    FirebaseFirestore.instance
-                        .collection('files')
-                        .add({'name': _controller.text});
+                    FirebaseFirestore.instance.collection('files').add({
+                      'name': _controller.text,
+                      'uid': user.uid,
+                      'created_at': FieldValue.serverTimestamp(),
+                    });
                   } else {
                     FirebaseFirestore.instance
                         .collection('files')
                         .doc(editFileId)
-                        .update({'name': _controller.text});
+                        .update({
+                      'name': _controller.text,
+                    });
                   }
-                  Navigator.pop(context);
+                  context.pop(context);
                 },
                 style: ElevatedButton.styleFrom(
                   shape: RoundedRectangleBorder(

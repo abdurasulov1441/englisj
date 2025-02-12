@@ -2,6 +2,7 @@ import 'package:english/common/style/app_colors.dart';
 import 'package:english/common/style/app_style.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class AccountScreen extends StatefulWidget {
   const AccountScreen({super.key});
@@ -30,7 +31,7 @@ class _AccountScreenState extends State<AccountScreen> {
         backgroundColor: AppColors.backgroundColor,
         leading: IconButton(
           onPressed: () {
-            Navigator.pop(context);
+            context.pop(context);
           },
           icon: const Icon(
             Icons.arrow_back_ios,

@@ -1,7 +1,10 @@
 import 'package:email_validator/email_validator.dart';
+import 'package:english/app/router.dart';
+import 'package:english/common/style/app_colors.dart';
 import 'package:english/common/style/app_style.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -23,7 +26,6 @@ class _SignUpScreen extends State<SignUpScreen> {
     emailTextInputController.dispose();
     passwordTextInputController.dispose();
     passwordTextRepeatInputController.dispose();
-
     super.dispose();
   }
 
@@ -34,8 +36,6 @@ class _SignUpScreen extends State<SignUpScreen> {
   }
 
   Future<void> signUp() async {
-    final navigator = Navigator.of(context);
-
     final isValid = formKey.currentState!.validate();
     if (!isValid) return;
 
@@ -57,19 +57,21 @@ class _SignUpScreen extends State<SignUpScreen> {
       }
     }
 
-    navigator.pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false);
+    context.go(Routes.firebaseStream);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF1F1F1F),
+      backgroundColor: AppColors.backgroundColor,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF1F1F1F),
+        backgroundColor: AppColors.backgroundColor,
         elevation: 0,
         leading: IconButton(
           onPressed: () => Navigator.pop(context),
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          icon: const Icon(
+            Icons.arrow_back,
+          ),
         ),
       ),
       body: SingleChildScrollView(
@@ -78,14 +80,14 @@ class _SignUpScreen extends State<SignUpScreen> {
           child: Form(
             key: formKey,
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(
                   'Yangi akkaunt yarating',
                   style: AppStyle.fontStyle.copyWith(
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white),
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 const SizedBox(height: 10),
                 Center(
@@ -102,17 +104,17 @@ class _SignUpScreen extends State<SignUpScreen> {
                 Text(
                   ''.toUpperCase(),
                   style: AppStyle.fontStyle.copyWith(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white),
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 const SizedBox(height: 30),
                 TextFormField(
-                  style: const TextStyle(color: Colors.white),
+                  style: AppStyle.fontStyle,
                   controller: emailTextInputController,
                   decoration: InputDecoration(
                     filled: true,
-                    fillColor: Colors.grey[800],
+                    fillColor: AppColors.foregroundColor,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(15),
                       borderSide: BorderSide.none,
@@ -127,12 +129,12 @@ class _SignUpScreen extends State<SignUpScreen> {
                 ),
                 const SizedBox(height: 20),
                 TextFormField(
-                  style: const TextStyle(color: Colors.white),
+                  style: AppStyle.fontStyle,
                   controller: passwordTextInputController,
                   obscureText: isHiddenPassword,
                   decoration: InputDecoration(
                     filled: true,
-                    fillColor: Colors.grey[800],
+                    fillColor: AppColors.foregroundColor,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(15),
                       borderSide: BorderSide.none,
@@ -155,12 +157,12 @@ class _SignUpScreen extends State<SignUpScreen> {
                 ),
                 const SizedBox(height: 20),
                 TextFormField(
-                  style: const TextStyle(color: Colors.white),
+                  style: AppStyle.fontStyle,
                   controller: passwordTextRepeatInputController,
                   obscureText: isHiddenPassword,
                   decoration: InputDecoration(
                     filled: true,
-                    fillColor: Colors.grey[800],
+                    fillColor: AppColors.foregroundColor,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(15),
                       borderSide: BorderSide.none,
@@ -201,7 +203,7 @@ class _SignUpScreen extends State<SignUpScreen> {
                 const SizedBox(height: 20),
                 Center(
                   child: TextButton(
-                    onPressed: () => Navigator.of(context).pop(),
+                    onPressed: () => context.pop(),
                     child: Text(
                       'Akkauntingiz bormi? Kirish',
                       style: AppStyle.fontStyle.copyWith(color: Colors.white),

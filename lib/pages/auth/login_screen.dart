@@ -1,7 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:email_validator/email_validator.dart';
+import 'package:english/app/router.dart';
+import 'package:english/common/style/app_colors.dart';
 import 'package:english/common/style/app_style.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -30,9 +35,54 @@ class _LoginScreenState extends State<LoginScreen> {
     });
   }
 
-  Future<void> login() async {
-    final navigator = Navigator.of(context);
+  Future<void> signInWithGoogle(BuildContext context) async {
+    try {
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      if (googleUser == null) return;
 
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+
+      final AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      // Вход в Firebase
+      final UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithCredential(credential);
+
+      final User? user = userCredential.user;
+      if (user != null) {
+        final docSnapshot = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .get();
+
+        if (!docSnapshot.exists) {
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(user.uid)
+              .set({
+            'uid': user.uid,
+            'name': user.displayName ?? '',
+            'email': user.email ?? '',
+            'photoUrl': user.photoURL ?? '',
+            'created_at': FieldValue.serverTimestamp(),
+          });
+        }
+
+        context.go(Routes.firebaseStream);
+      }
+    } catch (e) {
+      print('Ошибка входа через Google: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Ошибка: ${e.toString()}")),
+      );
+    }
+  }
+
+  Future<void> login() async {
     final isValid = formKey.currentState!.validate();
     if (!isValid) return;
 
@@ -46,13 +96,13 @@ class _LoginScreenState extends State<LoginScreen> {
       } else {}
     }
 
-    navigator.pushNamedAndRemoveUntil('/main', (Route<dynamic> route) => false);
+    context.go(Routes.home);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF1F1F1F),
+      backgroundColor: AppColors.backgroundColor,
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 100),
@@ -75,10 +125,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 Center(
                   child: Text(
                     'Xush kelibsiz!',
-                    style: AppStyle.fontStyle.copyWith(
-                        color: Colors.white,
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold),
+                    style: AppStyle.fontStyle
+                        .copyWith(fontSize: 28, fontWeight: FontWeight.bold),
                   ),
                 ),
                 const SizedBox(height: 10),
@@ -91,18 +139,19 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: 30),
                 TextFormField(
-                  style: const TextStyle(color: Colors.white),
+                  style: AppStyle.fontStyle,
                   controller: emailTextInputController,
                   decoration: InputDecoration(
-                    filled: true,
-                    fillColor: Colors.grey[800],
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(15),
-                      borderSide: BorderSide.none,
-                    ),
-                    hintText: 'Emailingizni kiriting',
-                    hintStyle: TextStyle(color: Colors.grey[400]),
-                  ),
+                      filled: true,
+                      fillColor: AppColors.foregroundColor,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(15),
+                        borderSide: BorderSide.none,
+                      ),
+                      hintText: 'Emailingizni kiriting',
+                      hintStyle: AppStyle.fontStyle.copyWith(
+                        color: Colors.grey[400],
+                      )),
                   validator: (email) =>
                       email != null && !EmailValidator.validate(email)
                           ? 'To\'g\'ri email kiriting'
@@ -110,12 +159,12 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: 20),
                 TextFormField(
-                  style: const TextStyle(color: Colors.white),
+                  style: AppStyle.fontStyle,
                   controller: passwordTextInputController,
                   obscureText: isHiddenPassword,
                   decoration: InputDecoration(
                     filled: true,
-                    fillColor: Colors.grey[800],
+                    fillColor: AppColors.foregroundColor,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(15),
                       borderSide: BorderSide.none,
@@ -127,7 +176,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         isHiddenPassword
                             ? Icons.visibility_off
                             : Icons.visibility,
-                        color: Colors.white,
+                        color: AppColors.fileTextColor,
                       ),
                       onPressed: togglePasswordView,
                     ),
@@ -149,7 +198,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     onPressed: login,
                     child: Text(
                       'Kirish',
-                      style: AppStyle.fontStyle.copyWith(color: Colors.white),
+                      style: AppStyle.fontStyle.copyWith(
+                        color: Colors.white,
+                        fontSize: 18,
+                      ),
                     ),
                   ),
                 ),
@@ -159,21 +211,48 @@ class _LoginScreenState extends State<LoginScreen> {
                   children: [
                     TextButton(
                         onPressed: () {
-                          Navigator.of(context).pushNamed('/reset_password');
+                          context.push(Routes.resetPasswordPage);
                         },
                         child: Text(
                           'Parolni unutdingizmi?',
-                          style:
-                              AppStyle.fontStyle.copyWith(color: Colors.white),
+                          style: AppStyle.fontStyle.copyWith(),
                         )),
                   ],
                 ),
                 Center(
                   child: TextButton(
-                    onPressed: () => Navigator.of(context).pushNamed('/signup'),
+                    onPressed: () => context.push(Routes.signUpPage),
                     child: Text(
                       'Hisobingiz yo\'qmi? Ro\'yxatdan o\'ting',
-                      style: AppStyle.fontStyle.copyWith(color: Colors.white),
+                      style: AppStyle.fontStyle.copyWith(),
+                    ),
+                  ),
+                ),
+                Container(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () => signInWithGoogle(context),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Image.asset('assets/images/google.png', height: 24),
+                        SizedBox(width: 10),
+                        Text(
+                          'Sign in with Google',
+                          style: AppStyle.fontStyle.copyWith(
+                            color: Colors.black,
+                            fontSize: 18,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),

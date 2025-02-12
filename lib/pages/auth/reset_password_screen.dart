@@ -3,7 +3,8 @@ import 'package:english/common/style/app_colors.dart';
 import 'package:english/common/style/app_style.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
   const ResetPasswordScreen({super.key});
@@ -34,10 +35,8 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
           .sendPasswordResetEmail(email: emailTextInputController.text.trim());
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
-       
         return;
       } else {
-       
         return;
       }
     }
@@ -55,21 +54,18 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF1F1F1F),
+      backgroundColor: AppColors.backgroundColor,
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         leading: IconButton(
             onPressed: () {
-              Navigator.pop(context);
+              context.pop(context);
             },
-            icon: const Icon(
-              Icons.arrow_back,
-              color: Colors.white,
-            )),
-        backgroundColor: Colors.grey[800],
+            icon: SvgPicture.asset('assets/icons/arrow_back.svg')),
+        backgroundColor: AppColors.foregroundColor,
         title: Text(
           'Parolni tiklash',
-          style: AppStyle.fontStyle.copyWith(color: Colors.white),
+          style: AppStyle.fontStyle.copyWith(),
         ),
       ),
       body: Padding(
@@ -96,7 +92,8 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                   hintText: 'Emailingizni kiriting',
                   hintStyle: AppStyle.fontStyle.copyWith(color: Colors.grey),
                   filled: true,
-                  fillColor: Colors.grey[850], // Darker background for input
+                  fillColor:
+                      AppColors.foregroundColor, // Darker background for input
                 ),
               ),
               const SizedBox(height: 30),

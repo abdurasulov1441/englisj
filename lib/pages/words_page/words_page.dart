@@ -2,9 +2,11 @@ import 'package:english/common/style/app_colors.dart';
 import 'package:english/common/style/app_style.dart';
 import 'package:english/pages/add_words_page/add_words_page.dart';
 import 'package:english/pages/word_view_page/word_view_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 
 class WordsScreen extends StatelessWidget {
   final String fileId;
@@ -14,6 +16,7 @@ class WordsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
     void _showDeleteConfirmationDialog(
         BuildContext context, String fileId, String wordId) {
       showDialog(
@@ -32,7 +35,7 @@ class WordsScreen extends StatelessWidget {
             actions: [
               TextButton(
                 onPressed: () {
-                  Navigator.pop(context);
+                  context.pop(context);
                 },
                 child: Text('Cancel',
                     style: AppStyle.fontStyle.copyWith(color: Colors.grey)),
@@ -45,7 +48,7 @@ class WordsScreen extends StatelessWidget {
                       .collection('words')
                       .doc(wordId)
                       .delete();
-                  Navigator.pop(context);
+                  context.pop(context);
                 },
                 child: Text('Delete',
                     style: AppStyle.fontStyle.copyWith(
@@ -109,6 +112,7 @@ class WordsScreen extends StatelessWidget {
                   .collection('files')
                   .doc(fileId)
                   .collection('words')
+                  .where('uid', isEqualTo: user!.uid)
                   .snapshots(),
               builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
@@ -161,9 +165,8 @@ class WordsScreen extends StatelessWidget {
                                   MaterialPageRoute(
                                     builder: (context) => AddWordScreen(
                                       fileId: fileId,
-                                      wordId: word.id, // Передаем ID слова
-                                      initialRule: word[
-                                          'rule'], // Передаем текущие данные
+                                      wordId: word.id,
+                                      initialRule: word['rule'],
                                       initialComment: word['comment'],
                                       initialExamples:
                                           List<Map<String, dynamic>>.from(

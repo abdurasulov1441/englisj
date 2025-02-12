@@ -2,8 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:english/common/style/app_colors.dart';
 import 'package:english/common/style/app_style.dart';
 import 'package:english/pages/add_words_page/my_custom_textfield.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 
 class AddWordScreen extends StatefulWidget {
   final String fileId;
@@ -88,8 +90,10 @@ class _AddWordScreenState extends State<AddWordScreen> {
   }
 
   void saveWord() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
     if (widget.wordId == null) {
-      // Добавляем новое слово
       await FirebaseFirestore.instance
           .collection('files')
           .doc(widget.fileId)
@@ -111,6 +115,7 @@ class _AddWordScreenState extends State<AddWordScreen> {
             'uzbek': example3UzController.text
           },
         ],
+        'uid': user.uid, // Привязываем слово к пользователю
       });
     } else {
       // Обновляем существующее слово
@@ -139,7 +144,7 @@ class _AddWordScreenState extends State<AddWordScreen> {
       });
     }
 
-    Navigator.pop(context);
+    context.pop(context);
   }
 
   @override
@@ -152,7 +157,7 @@ class _AddWordScreenState extends State<AddWordScreen> {
           padding: const EdgeInsets.all(8.0),
           child: GestureDetector(
             onTap: () {
-              Navigator.pop(context);
+              context.pop(context);
             },
             child: SvgPicture.asset('assets/icons/arrow_back.svg'),
           ),

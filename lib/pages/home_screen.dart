@@ -1,19 +1,39 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:english/app/router.dart';
 import 'package:english/common/style/app_colors.dart';
 import 'package:english/common/style/app_style.dart';
 import 'package:english/pages/add_file_page/add_file_page.dart';
+import 'package:english/pages/auth/login_screen.dart';
 import 'package:english/pages/words_page/words_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 
 class HomeScreen extends StatelessWidget {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   @override
   Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      return LoginScreen();
+    }
     return Scaffold(
       backgroundColor: AppColors.backgroundColor,
       appBar: AppBar(
+        actions: [
+          IconButton(
+            onPressed: () async {
+              await FirebaseAuth.instance.signOut();
+              context.go(Routes.loginPage);
+            },
+            icon: Icon(
+              Icons.exit_to_app,
+              color: AppColors.iconColor,
+            ),
+          ),
+        ],
         backgroundColor: AppColors.foregroundColor,
         centerTitle: true,
         title: Text(
@@ -23,7 +43,10 @@ class HomeScreen extends StatelessWidget {
         ),
       ),
       body: StreamBuilder(
-        stream: _firestore.collection('files').snapshots(),
+        stream: _firestore
+            .collection('files')
+            .where('uid', isEqualTo: user.uid)
+            .snapshots(),
         builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (!snapshot.hasData) {
             return Center(child: CircularProgressIndicator());
@@ -75,6 +98,7 @@ class HomeScreen extends StatelessWidget {
                           .collection('files')
                           .doc(file.id)
                           .collection('words')
+                          .where('uid', isEqualTo: user.uid)
                           .snapshots(),
                       builder:
                           (context, AsyncSnapshot<QuerySnapshot> wordSnapshot) {
@@ -107,7 +131,7 @@ class HomeScreen extends StatelessWidget {
                                       style: AppStyle.fontStyle,
                                     ),
                                     onTap: () {
-                                      Navigator.pop(context);
+                                      context.pop(context);
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
@@ -129,7 +153,7 @@ class HomeScreen extends StatelessWidget {
                                       style: AppStyle.fontStyle,
                                     ),
                                     onTap: () {
-                                      Navigator.pop(context);
+                                      context.pop(context);
                                       _showDeleteConfirmationDialog(
                                           context, file.id);
                                     },
@@ -192,7 +216,7 @@ class HomeScreen extends StatelessWidget {
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.pop(context);
+                context.pop(context);
               },
               child: Text('Cancel',
                   style: AppStyle.fontStyle.copyWith(color: Colors.grey)),
@@ -203,7 +227,7 @@ class HomeScreen extends StatelessWidget {
                     .collection('files')
                     .doc(fileId)
                     .delete();
-                Navigator.pop(context);
+                context.pop(context);
               },
               child: Text('Delete',
                   style: AppStyle.fontStyle.copyWith(color: Colors.red)),
