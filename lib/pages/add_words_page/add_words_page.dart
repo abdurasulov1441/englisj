@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:english/common/style/app_colors.dart';
 import 'package:english/common/style/app_style.dart';
 import 'package:english/pages/add_words_page/my_custom_textfield.dart';
-import 'package:english/pages/word_view_page/word_view_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
