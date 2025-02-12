@@ -6,37 +6,165 @@ import 'package:english/pages/word_view_page/word_view_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-class AddWordScreen extends StatelessWidget {
+class AddWordScreen extends StatefulWidget {
   final String fileId;
-  final TextEditingController ruleController = TextEditingController();
-  final TextEditingController commentController = TextEditingController();
-  final TextEditingController example1EnController = TextEditingController();
-  final TextEditingController example1UzController = TextEditingController();
-  final TextEditingController example2EnController = TextEditingController();
-  final TextEditingController example2UzController = TextEditingController();
-  final TextEditingController example3EnController = TextEditingController();
-  final TextEditingController example3UzController = TextEditingController();
+  final String? wordId;
+  final String? initialRule;
+  final String? initialComment;
+  final List<Map<String, dynamic>>? initialExamples;
 
-  AddWordScreen({required this.fileId});
+  AddWordScreen({
+    required this.fileId,
+    this.wordId,
+    this.initialRule,
+    this.initialComment,
+    this.initialExamples,
+  });
+
+  @override
+  _AddWordScreenState createState() => _AddWordScreenState();
+}
+
+class _AddWordScreenState extends State<AddWordScreen> {
+  late TextEditingController ruleController;
+  late TextEditingController commentController;
+  late TextEditingController example1EnController;
+  late TextEditingController example1UzController;
+  late TextEditingController example2EnController;
+  late TextEditingController example2UzController;
+  late TextEditingController example3EnController;
+  late TextEditingController example3UzController;
+
+  @override
+  void initState() {
+    super.initState();
+
+    ruleController = TextEditingController(text: widget.initialRule ?? '');
+    commentController =
+        TextEditingController(text: widget.initialComment ?? '');
+
+    example1EnController = TextEditingController(
+        text: widget.initialExamples?.isNotEmpty == true
+            ? widget.initialExamples![0]['english']
+            : '');
+    example1UzController = TextEditingController(
+        text: widget.initialExamples?.isNotEmpty == true
+            ? widget.initialExamples![0]['uzbek']
+            : '');
+
+    example2EnController = TextEditingController(
+        text:
+            widget.initialExamples != null && widget.initialExamples!.length > 1
+                ? widget.initialExamples![1]['english']
+                : '');
+    example2UzController = TextEditingController(
+        text:
+            widget.initialExamples != null && widget.initialExamples!.length > 1
+                ? widget.initialExamples![1]['uzbek']
+                : '');
+
+    example3EnController = TextEditingController(
+        text:
+            widget.initialExamples != null && widget.initialExamples!.length > 2
+                ? widget.initialExamples![2]['english']
+                : '');
+    example3UzController = TextEditingController(
+        text:
+            widget.initialExamples != null && widget.initialExamples!.length > 2
+                ? widget.initialExamples![2]['uzbek']
+                : '');
+  }
+
+  @override
+  void dispose() {
+    ruleController.dispose();
+    commentController.dispose();
+    example1EnController.dispose();
+    example1UzController.dispose();
+    example2EnController.dispose();
+    example2UzController.dispose();
+    example3EnController.dispose();
+    example3UzController.dispose();
+    super.dispose();
+  }
+
+  void saveWord() async {
+    if (widget.wordId == null) {
+      // Добавляем новое слово
+      await FirebaseFirestore.instance
+          .collection('files')
+          .doc(widget.fileId)
+          .collection('words')
+          .add({
+        'rule': ruleController.text,
+        'comment': commentController.text,
+        'examples': [
+          {
+            'english': example1EnController.text,
+            'uzbek': example1UzController.text
+          },
+          {
+            'english': example2EnController.text,
+            'uzbek': example2UzController.text
+          },
+          {
+            'english': example3EnController.text,
+            'uzbek': example3UzController.text
+          },
+        ],
+      });
+    } else {
+      // Обновляем существующее слово
+      await FirebaseFirestore.instance
+          .collection('files')
+          .doc(widget.fileId)
+          .collection('words')
+          .doc(widget.wordId)
+          .update({
+        'rule': ruleController.text,
+        'comment': commentController.text,
+        'examples': [
+          {
+            'english': example1EnController.text,
+            'uzbek': example1UzController.text
+          },
+          {
+            'english': example2EnController.text,
+            'uzbek': example2UzController.text
+          },
+          {
+            'english': example3EnController.text,
+            'uzbek': example3UzController.text
+          },
+        ],
+      });
+    }
+
+    Navigator.pop(context);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.backgroundColor,
       appBar: AppBar(
-          leading: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: GestureDetector(
-                onTap: () {
-                  Navigator.pop(context);
-                },
-                child: SvgPicture.asset('assets/icons/arrow_back.svg')),
+        backgroundColor: AppColors.foregroundColor,
+        leading: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: GestureDetector(
+            onTap: () {
+              Navigator.pop(context);
+            },
+            child: SvgPicture.asset('assets/icons/arrow_back.svg'),
           ),
-          centerTitle: true,
-          title: Text(
-            'Add file',
-            style: AppStyle.fontStyle
-                .copyWith(fontSize: 20, color: AppColors.appBarTextColor),
-          )),
+        ),
+        centerTitle: true,
+        title: Text(
+          widget.wordId == null ? 'Add Word' : 'Edit Word',
+          style: AppStyle.fontStyle
+              .copyWith(fontSize: 20, color: AppColors.appBarTextColor),
+        ),
+      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.all(16.0),
@@ -45,155 +173,64 @@ class AddWordScreen extends StatelessWidget {
               CustomTextField(controller: ruleController, hintText: 'Rule'),
               CustomTextField(
                   controller: commentController, hintText: 'Comment'),
-              SizedBox(
-                height: 10,
-              ),
-              Container(
-                decoration: BoxDecoration(
-                  color: AppColors.foregroundColor,
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: AppColors.dividerColor),
-                ),
-                padding: EdgeInsets.all(10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'First Example',
-                      style: AppStyle.fontStyle.copyWith(
-                        color: AppColors.dividerColor,
-                        fontSize: 16,
-                      ),
-                    ),
-                    CustomTextField(
-                        controller: example1EnController, hintText: 'English'),
-                    CustomTextField(
-                        controller: example1UzController, hintText: 'Uzbek'),
-                  ],
-                ),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Container(
-                decoration: BoxDecoration(
-                  color: AppColors.foregroundColor,
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: AppColors.dividerColor),
-                ),
-                padding: EdgeInsets.all(10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Second Example',
-                      style: AppStyle.fontStyle.copyWith(
-                        color: AppColors.dividerColor,
-                        fontSize: 16,
-                      ),
-                    ),
-                    CustomTextField(
-                        controller: example2EnController, hintText: 'English'),
-                    CustomTextField(
-                        controller: example2UzController, hintText: 'Uzbek'),
-                  ],
-                ),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Container(
-                decoration: BoxDecoration(
-                  color: AppColors.foregroundColor,
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: AppColors.dividerColor),
-                ),
-                padding: EdgeInsets.all(10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Third Example ',
-                      style: AppStyle.fontStyle.copyWith(
-                        color: AppColors.dividerColor,
-                        fontSize: 16,
-                      ),
-                    ),
-                    CustomTextField(
-                        controller: example3EnController, hintText: 'English'),
-                    CustomTextField(
-                        controller: example3UzController, hintText: 'Uzbek'),
-                  ],
-                ),
-              ),
+              SizedBox(height: 10),
+              _buildExampleContainer(
+                  'First Example', example1EnController, example1UzController),
+              SizedBox(height: 10),
+              _buildExampleContainer(
+                  'Second Example', example2EnController, example2UzController),
+              SizedBox(height: 10),
+              _buildExampleContainer(
+                  'Third Example', example3EnController, example3UzController),
               SizedBox(height: 20),
               Container(
                 width: double.infinity,
                 child: ElevatedButton(
-                    onPressed: () async {
-                      DocumentReference newWordRef = await FirebaseFirestore
-                          .instance
-                          .collection('files')
-                          .doc(fileId)
-                          .collection('words')
-                          .add({
-                        'rule': ruleController.text,
-                        'comment': commentController.text,
-                        'examples': [
-                          {
-                            'english': example1EnController.text,
-                            'uzbek': example1UzController.text
-                          },
-                          {
-                            'english': example2EnController.text,
-                            'uzbek': example2UzController.text
-                          },
-                          {
-                            'english': example3EnController.text,
-                            'uzbek': example3UzController.text
-                          },
-                        ]
-                      });
-                      print(newWordRef.id);
-
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => WordViewPage(
-                            rule: ruleController.text,
-                            comment: commentController.text,
-                            examples: [
-                              {
-                                'english': example1EnController.text,
-                                'uzbek': example1UzController.text
-                              },
-                              {
-                                'english': example2EnController.text,
-                                'uzbek': example2UzController.text
-                              },
-                              {
-                                'english': example3EnController.text,
-                                'uzbek': example3UzController.text
-                              },
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        backgroundColor: AppColors.saveButtonColor),
-                    child: Text(
-                      'S A V E',
-                      style: AppStyle.fontStyle.copyWith(
-                          color: AppColors.foregroundColor, fontSize: 20),
-                    )),
+                  onPressed: saveWord,
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    backgroundColor: AppColors.saveButtonColor,
+                  ),
+                  child: Text(
+                    'S A V E',
+                    style: AppStyle.fontStyle.copyWith(
+                      color: AppColors.foregroundColor,
+                      fontSize: 20,
+                    ),
+                  ),
+                ),
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildExampleContainer(String title,
+      TextEditingController enController, TextEditingController uzController) {
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.foregroundColor,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: AppColors.dividerColor),
+      ),
+      padding: EdgeInsets.all(10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: AppStyle.fontStyle.copyWith(
+              color: AppColors.dividerColor,
+              fontSize: 16,
+            ),
+          ),
+          CustomTextField(controller: enController, hintText: 'English'),
+          CustomTextField(controller: uzController, hintText: 'Uzbek'),
+        ],
       ),
     );
   }

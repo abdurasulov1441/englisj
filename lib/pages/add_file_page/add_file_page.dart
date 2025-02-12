@@ -6,66 +6,87 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 class AddFilePage extends StatelessWidget {
   final TextEditingController _controller = TextEditingController();
+  final String? editFileId;
+  final String? editFileName;
+
+  AddFilePage({this.editFileId, this.editFileName}) {
+    if (editFileName != null) {
+      _controller.text = editFileName!;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.backgroundColor,
       appBar: AppBar(
-          leading: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: GestureDetector(
-                onTap: () {
-                  Navigator.pop(context);
-                },
-                child: SvgPicture.asset('assets/icons/arrow_back.svg')),
+        backgroundColor: AppColors.foregroundColor,
+        leading: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: GestureDetector(
+            onTap: () {
+              Navigator.pop(context);
+            },
+            child: SvgPicture.asset('assets/icons/arrow_back.svg'),
           ),
-          centerTitle: true,
-          title: Text(
-            'Add file',
-            style: AppStyle.fontStyle
-                .copyWith(fontSize: 20, color: AppColors.appBarTextColor),
-          )),
+        ),
+        centerTitle: true,
+        title: Text(
+          editFileId == null ? 'Add file' : 'Edit file',
+          style: AppStyle.fontStyle
+              .copyWith(fontSize: 20, color: AppColors.appBarTextColor),
+        ),
+      ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
         child: Column(
           children: [
-            SizedBox(
-              height: 30,
-            ),
+            SizedBox(height: 30),
             TextField(
               controller: _controller,
               decoration: InputDecoration(
-                  fillColor: AppColors.foregroundColor,
-                  filled: true,
-                  focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide(color: AppColors.dividerColor)),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: AppColors.dividerColor),
-                  ),
-                  hintText: 'file name enter',
-                  hintStyle: AppStyle.fontStyle
-                      .copyWith(color: AppColors.dividerColor, fontSize: 16)),
+                fillColor: AppColors.foregroundColor,
+                filled: true,
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide(color: AppColors.dividerColor),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: AppColors.dividerColor),
+                ),
+                hintText: 'Enter file name',
+                hintStyle: AppStyle.fontStyle
+                    .copyWith(color: AppColors.dividerColor, fontSize: 16),
+              ),
             ),
             SizedBox(height: 20),
             Container(
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
-                  FirebaseFirestore.instance
-                      .collection('files')
-                      .add({'name': _controller.text});
+                  if (editFileId == null) {
+                    FirebaseFirestore.instance
+                        .collection('files')
+                        .add({'name': _controller.text});
+                  } else {
+                    FirebaseFirestore.instance
+                        .collection('files')
+                        .doc(editFileId)
+                        .update({'name': _controller.text});
+                  }
                   Navigator.pop(context);
                 },
                 style: ElevatedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    backgroundColor: AppColors.saveButtonColor),
-                child: Text('S A V E',
-                    style: AppStyle.fontStyle.copyWith(
-                        color: AppColors.foregroundColor, fontSize: 20)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  backgroundColor: AppColors.saveButtonColor,
+                ),
+                child: Text(
+                  'S A V E',
+                  style: AppStyle.fontStyle
+                      .copyWith(color: AppColors.foregroundColor, fontSize: 20),
+                ),
               ),
             ),
           ],

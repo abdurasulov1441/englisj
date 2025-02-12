@@ -14,8 +14,53 @@ class WordsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    void _showDeleteConfirmationDialog(
+        BuildContext context, String fileId, String wordId) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            backgroundColor: AppColors.foregroundColor,
+            title: Text(
+              'Confirm Deletion',
+              style: AppStyle.fontStyle.copyWith(fontSize: 20),
+            ),
+            content: Text(
+              'Are you sure you want to delete this word? This action cannot be undone.',
+              style: AppStyle.fontStyle.copyWith(),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text('Cancel',
+                    style: AppStyle.fontStyle.copyWith(color: Colors.grey)),
+              ),
+              TextButton(
+                onPressed: () async {
+                  await FirebaseFirestore.instance
+                      .collection('files')
+                      .doc(fileId)
+                      .collection('words')
+                      .doc(wordId)
+                      .delete();
+                  Navigator.pop(context);
+                },
+                child: Text('Delete',
+                    style: AppStyle.fontStyle.copyWith(
+                        color: Colors.red, fontWeight: FontWeight.bold)),
+              ),
+            ],
+          );
+        },
+      );
+    }
+
     return Scaffold(
+      backgroundColor: AppColors.backgroundColor,
       appBar: AppBar(
+        backgroundColor: AppColors.foregroundColor,
         leading: IconButton(
           icon: SvgPicture.asset('assets/icons/arrow_back.svg'),
           onPressed: () => Navigator.pop(context),
@@ -70,7 +115,11 @@ class WordsScreen extends StatelessWidget {
                   return Center(child: CircularProgressIndicator());
                 }
                 if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                  return Center(child: Text('No words added yet.'));
+                  return Center(
+                      child: Text(
+                    'No words added yet.',
+                    style: AppStyle.fontStyle,
+                  ));
                 }
 
                 var words = snapshot.data!.docs;
@@ -80,21 +129,59 @@ class WordsScreen extends StatelessWidget {
                   itemBuilder: (context, index) {
                     var word = words[index];
                     return Card(
+                      color: AppColors.foregroundColor,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: ListTile(
                         title: Text(
                           word['rule'],
-                          style: TextStyle(
-                            fontSize: 18,
+                          style: AppStyle.fontStyle.copyWith(
+                            color: AppColors.wordHeaderTextColor,
                             fontWeight: FontWeight.bold,
-                            color: Colors.blue,
+                            fontSize: 20,
                           ),
                         ),
                         subtitle: Text(
                           word['comment'],
-                          style: TextStyle(color: Colors.green),
+                          style: AppStyle.fontStyle.copyWith(
+                            color: AppColors.darkGreenColor,
+                            fontSize: 16,
+                          ),
+                        ),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              icon: SvgPicture.asset('assets/icons/edit.svg',
+                                  color: AppColors.wordHeaderTextColor),
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => AddWordScreen(
+                                      fileId: fileId,
+                                      wordId: word.id, // Передаем ID слова
+                                      initialRule: word[
+                                          'rule'], // Передаем текущие данные
+                                      initialComment: word['comment'],
+                                      initialExamples:
+                                          List<Map<String, dynamic>>.from(
+                                              word['examples']),
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                            IconButton(
+                              icon: SvgPicture.asset('assets/icons/delete.svg',
+                                  color: AppColors.iconColor),
+                              onPressed: () {
+                                _showDeleteConfirmationDialog(
+                                    context, fileId, word.id);
+                              },
+                            ),
+                          ],
                         ),
                         onTap: () {
                           Navigator.push(

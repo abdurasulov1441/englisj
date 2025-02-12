@@ -3,7 +3,6 @@ import 'package:english/common/style/app_style.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -44,10 +43,7 @@ class _LoginScreenState extends State<LoginScreen> {
       );
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found' || e.code == 'wrong-password') {
-       
-      } else {
-       
-      }
+      } else {}
     }
 
     navigator.pushNamedAndRemoveUntil('/main', (Route<dynamic> route) => false);
@@ -69,7 +65,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(50),
                     child: Image.asset(
-                      'assets/images/logo.jpg',
+                      'assets/images/logo.png',
                       width: 100,
                       height: 100,
                     ),

@@ -92,7 +92,7 @@ class _SignUpScreen extends State<SignUpScreen> {
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(50),
                     child: Image.asset(
-                      'assets/images/logo.jpg',
+                      'assets/images/logo.png',
                       width: 100,
                       height: 100,
                     ),
