@@ -1,6 +1,7 @@
 import 'package:english/common/style/app_colors.dart';
 import 'package:english/common/style/app_style.dart';
 import 'package:english/pages/add_words_page/add_words_page.dart';
+import 'package:english/pages/quiz_page/quiz_page.dart';
 import 'package:english/pages/word_view_page/word_view_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -80,31 +81,56 @@ class WordsScreen extends StatelessWidget {
       body: Column(
         children: [
           SizedBox(height: 10),
-          Align(
-            alignment: Alignment.centerRight,
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.0),
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.0),
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    backgroundColor: AppColors.buttonColor,
                   ),
-                  backgroundColor: AppColors.buttonColor,
-                ),
-                onPressed: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => AddWordScreen(fileId: fileId),
+                  onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => QuizPage(fileId: fileId),
+                    ),
                   ),
-                ),
-                child: Text(
-                  'Add word',
-                  style: AppStyle.fontStyle.copyWith(
-                    color: AppColors.foregroundColor,
+                  child: Text(
+                    'Quiz',
+                    style: AppStyle.fontStyle.copyWith(
+                      color: AppColors.foregroundColor,
+                    ),
                   ),
                 ),
               ),
-            ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.0),
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    backgroundColor: AppColors.buttonColor,
+                  ),
+                  onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => AddWordScreen(fileId: fileId),
+                    ),
+                  ),
+                  child: Text(
+                    'Add word',
+                    style: AppStyle.fontStyle.copyWith(
+                      color: AppColors.foregroundColor,
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
           Expanded(
             child: StreamBuilder(

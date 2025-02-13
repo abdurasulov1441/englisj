@@ -20,13 +20,6 @@ class HomeScreen extends StatelessWidget {
       return LoginScreen();
     }
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(50),
-          ),
-          onPressed: () {
-            context.go(Routes.quizAppPage);
-          }),
       backgroundColor: AppColors.backgroundColor,
       appBar: AppBar(
         actions: [
@@ -65,6 +58,23 @@ class HomeScreen extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
+                  Container(
+                    padding: EdgeInsets.all(5),
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        backgroundColor: AppColors.buttonColor,
+                      ),
+                      onPressed: () => context.push(Routes.quizAppPage),
+                      child: Text(
+                        'Quiz',
+                        style: AppStyle.fontStyle
+                            .copyWith(color: AppColors.foregroundColor),
+                      ),
+                    ),
+                  ),
                   Container(
                     padding: EdgeInsets.all(5),
                     child: ElevatedButton(

@@ -116,6 +116,7 @@ class _AddWordScreenState extends State<AddWordScreen> {
           },
         ],
         'uid': user.uid, // Привязываем слово к пользователю
+        'created_at': FieldValue.serverTimestamp(),
       });
     } else {
       // Обновляем существующее слово
