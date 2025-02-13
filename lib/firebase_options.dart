@@ -63,6 +63,6 @@ class DefaultFirebaseOptions {
     messagingSenderId: '932128927833',
     projectId: 'english-5783f',
     storageBucket: 'english-5783f.firebasestorage.app',
-    iosBundleId: 'com.example.english',
+    iosBundleId: 'uz.english.quiz',
   );
 }

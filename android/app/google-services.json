@@ -9,10 +9,23 @@
       "client_info": {
         "mobilesdk_app_id": "1:932128927833:android:f94c5713c6a299716e0148",
         "android_client_info": {
-          "package_name": "com.example.english"
+          "package_name": "uz.english.quiz"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "932128927833-aansuac0ib4o0oantijld4dagv5flk06.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "uz.english.quiz",
+            "certificate_hash": "b3091f807d1af00ce708fe27b626e24954e74467"
+          }
+        },
+        {
+          "client_id": "932128927833-j9dttnnhq50cem02tso0afte4l5l6hfo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyB9ozJI5cKKlKsW8bfQRUttYKLRWN6uyIY"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "932128927833-j9dttnnhq50cem02tso0afte4l5l6hfo.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "932128927833-jo2teg09hh9v3o8huktvto89u0oo8c00.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "uz.english.quiz"
+              }
+            }
+          ]
         }
       }
     }
