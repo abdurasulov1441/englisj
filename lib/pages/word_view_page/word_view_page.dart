@@ -59,11 +59,13 @@ class WordViewPage extends StatelessWidget {
                                 color: AppColors.dividerColor, fontSize: 16)),
                         Row(
                           children: [
-                            Text(
-                              '${example['english']}',
-                              style: AppStyle.fontStyle.copyWith(
-                                fontSize: 16,
-                                color: AppColors.orange,
+                            Expanded(
+                              child: Text(
+                                '${example['english']}',
+                                style: AppStyle.fontStyle.copyWith(
+                                  fontSize: 16,
+                                  color: AppColors.orange,
+                                ),
                               ),
                             ),
                           ],
@@ -74,11 +76,15 @@ class WordViewPage extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
-                            Text('${example['uzbek']}',
+                            Expanded(
+                              child: Text(
+                                '${example['uzbek']}',
                                 style: AppStyle.fontStyle.copyWith(
                                   fontSize: 16,
                                   color: AppColors.greenTextColor,
-                                )),
+                                ),
+                              ),
+                            ),
                           ],
                         ),
                       ],

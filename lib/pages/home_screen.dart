@@ -192,6 +192,8 @@ class HomeScreen extends StatelessWidget {
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,
                                     ),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
                                 Text(
