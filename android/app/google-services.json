@@ -7,18 +7,18 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:932128927833:android:f94c5713c6a299716e0148",
+        "mobilesdk_app_id": "1:932128927833:android:c4315462e802fd976e0148",
         "android_client_info": {
           "package_name": "uz.english.quiz"
         }
       },
       "oauth_client": [
         {
-          "client_id": "932128927833-aansuac0ib4o0oantijld4dagv5flk06.apps.googleusercontent.com",
+          "client_id": "932128927833-cd80rg273166kvhje5l7ia7o85lbkka8.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "uz.english.quiz",
-            "certificate_hash": "b3091f807d1af00ce708fe27b626e24954e74467"
+            "certificate_hash": "0ecf34d8934202417f88bc51f6ff2e94204ae0b6"
           }
         },
         {
@@ -42,7 +42,7 @@
               "client_id": "932128927833-jo2teg09hh9v3o8huktvto89u0oo8c00.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "uz.english.quiz"
+                "bundle_id": "com.example.english"
               }
             }
           ]

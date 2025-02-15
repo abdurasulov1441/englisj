@@ -1,0 +1,2 @@
+C:/Users/HACKERPC/Desktop/English_mobile/english/android/app/.cxx/RelWithDebInfo/403d5c1i/x86/CMakeFiles/edit_cache.dir
+C:/Users/HACKERPC/Desktop/English_mobile/english/android/app/.cxx/RelWithDebInfo/403d5c1i/x86/CMakeFiles/rebuild_cache.dir
