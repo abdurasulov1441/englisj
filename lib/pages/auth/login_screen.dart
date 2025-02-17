@@ -48,10 +48,8 @@ class _LoginScreenState extends State<LoginScreen> {
         idToken: googleAuth.idToken,
       );
 
-      // Вход в Firebase
       final UserCredential userCredential =
           await FirebaseAuth.instance.signInWithCredential(credential);
-
       final User? user = userCredential.user;
       if (user != null) {
         final docSnapshot = await FirebaseFirestore.instance
@@ -72,7 +70,7 @@ class _LoginScreenState extends State<LoginScreen> {
           });
         }
 
-        context.go(Routes.firebaseStream);
+        context.go(Routes.home);
       }
     } catch (e) {
       print('Ошибка входа через Google: $e');
@@ -96,7 +94,7 @@ class _LoginScreenState extends State<LoginScreen> {
       } else {}
     }
 
-    context.go(Routes.home);
+
   }
 
   @override

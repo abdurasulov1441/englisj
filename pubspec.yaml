@@ -3,7 +3,7 @@ description: "A new Flutter project."
 
 publish_to: 'none'
 
-version: 1.0.0+1
+version: 3.0.0+3
 
 environment:
   sdk: ^3.6.2
@@ -27,6 +27,8 @@ dependencies:
   google_sign_in: ^6.2.2
   flip_card_swiper: ^1.0.0
   swipeable_card_stack: ^0.0.5
+  firebase_messaging: ^15.2.2
+  flutter_local_notifications: ^18.0.1
 
 dev_dependencies:
   flutter_test:

@@ -14,11 +14,19 @@
       },
       "oauth_client": [
         {
-          "client_id": "932128927833-cd80rg273166kvhje5l7ia7o85lbkka8.apps.googleusercontent.com",
+          "client_id": "932128927833-0re6cta42auagk9fdlm2sn899neh0p3u.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "uz.english.quiz",
-            "certificate_hash": "0ecf34d8934202417f88bc51f6ff2e94204ae0b6"
+            "certificate_hash": "52ae9b3a0fcae771bf46753efcba4abd766851ca"
+          }
+        },
+        {
+          "client_id": "932128927833-9c542e7okvfbl5ugg0pikud17ji1pna9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "uz.english.quiz",
+            "certificate_hash": "2622c52768c1bb33ff01894daef68bfeafd85b84"
           }
         },
         {
