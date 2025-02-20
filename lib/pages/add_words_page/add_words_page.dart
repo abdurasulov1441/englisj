@@ -29,12 +29,7 @@ class AddWordScreen extends StatefulWidget {
 class _AddWordScreenState extends State<AddWordScreen> {
   late TextEditingController ruleController;
   late TextEditingController commentController;
-  late TextEditingController example1EnController;
-  late TextEditingController example1UzController;
-  late TextEditingController example2EnController;
-  late TextEditingController example2UzController;
-  late TextEditingController example3EnController;
-  late TextEditingController example3UzController;
+  List<Map<String, TextEditingController>> exampleControllers = [];
 
   @override
   void initState() {
@@ -44,54 +39,61 @@ class _AddWordScreenState extends State<AddWordScreen> {
     commentController =
         TextEditingController(text: widget.initialComment ?? '');
 
-    example1EnController = TextEditingController(
-        text: widget.initialExamples?.isNotEmpty == true
-            ? widget.initialExamples![0]['english']
-            : '');
-    example1UzController = TextEditingController(
-        text: widget.initialExamples?.isNotEmpty == true
-            ? widget.initialExamples![0]['uzbek']
-            : '');
-
-    example2EnController = TextEditingController(
-        text:
-            widget.initialExamples != null && widget.initialExamples!.length > 1
-                ? widget.initialExamples![1]['english']
-                : '');
-    example2UzController = TextEditingController(
-        text:
-            widget.initialExamples != null && widget.initialExamples!.length > 1
-                ? widget.initialExamples![1]['uzbek']
-                : '');
-
-    example3EnController = TextEditingController(
-        text:
-            widget.initialExamples != null && widget.initialExamples!.length > 2
-                ? widget.initialExamples![2]['english']
-                : '');
-    example3UzController = TextEditingController(
-        text:
-            widget.initialExamples != null && widget.initialExamples!.length > 2
-                ? widget.initialExamples![2]['uzbek']
-                : '');
+    // Defolt 1 misol qo'shish
+    if (widget.initialExamples != null && widget.initialExamples!.isNotEmpty) {
+      for (var example in widget.initialExamples!) {
+        _addExample(
+          english: example['english'],
+          uzbek: example['uzbek'],
+        );
+      }
+    } else {
+      _addExample(); // Agar misollar bo‘lmasa, 1 ta qo‘shiladi
+    }
   }
 
   @override
   void dispose() {
     ruleController.dispose();
     commentController.dispose();
-    example1EnController.dispose();
-    example1UzController.dispose();
-    example2EnController.dispose();
-    example2UzController.dispose();
-    example3EnController.dispose();
-    example3UzController.dispose();
+    for (var controller in exampleControllers) {
+      controller['english']!.dispose();
+      controller['uzbek']!.dispose();
+    }
     super.dispose();
+  }
+
+  void _addExample({String english = '', String uzbek = ''}) {
+    if (exampleControllers.length < 3) {
+      setState(() {
+        exampleControllers.add({
+          'english': TextEditingController(text: english),
+          'uzbek': TextEditingController(text: uzbek),
+        });
+      });
+    }
+  }
+
+  void _removeExample(int index) {
+    if (exampleControllers.length > 1) {
+      setState(() {
+        exampleControllers[index]['english']!.dispose();
+        exampleControllers[index]['uzbek']!.dispose();
+        exampleControllers.removeAt(index);
+      });
+    }
   }
 
   void saveWord() async {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return;
+
+    List<Map<String, String>> examples = exampleControllers.map((example) {
+      return {
+        'english': example['english']!.text,
+        'uzbek': example['uzbek']!.text,
+      };
+    }).toList();
 
     if (widget.wordId == null) {
       await FirebaseFirestore.instance
@@ -101,25 +103,11 @@ class _AddWordScreenState extends State<AddWordScreen> {
           .add({
         'rule': ruleController.text,
         'comment': commentController.text,
-        'examples': [
-          {
-            'english': example1EnController.text,
-            'uzbek': example1UzController.text
-          },
-          {
-            'english': example2EnController.text,
-            'uzbek': example2UzController.text
-          },
-          {
-            'english': example3EnController.text,
-            'uzbek': example3UzController.text
-          },
-        ],
-        'uid': user.uid, // Привязываем слово к пользователю
+        'examples': examples,
+        'uid': user.uid,
         'created_at': FieldValue.serverTimestamp(),
       });
     } else {
-      // Обновляем существующее слово
       await FirebaseFirestore.instance
           .collection('files')
           .doc(widget.fileId)
@@ -128,24 +116,13 @@ class _AddWordScreenState extends State<AddWordScreen> {
           .update({
         'rule': ruleController.text,
         'comment': commentController.text,
-        'examples': [
-          {
-            'english': example1EnController.text,
-            'uzbek': example1UzController.text
-          },
-          {
-            'english': example2EnController.text,
-            'uzbek': example2UzController.text
-          },
-          {
-            'english': example3EnController.text,
-            'uzbek': example3UzController.text
-          },
-        ],
+        'examples': examples,
       });
     }
 
-    context.pop(context);
+    if (context.mounted) {
+      context.pop();
+    }
   }
 
   @override
@@ -158,7 +135,7 @@ class _AddWordScreenState extends State<AddWordScreen> {
           padding: const EdgeInsets.all(8.0),
           child: GestureDetector(
             onTap: () {
-              context.pop(context);
+              context.pop();
             },
             child: SvgPicture.asset('assets/icons/arrow_back.svg'),
           ),
@@ -179,14 +156,36 @@ class _AddWordScreenState extends State<AddWordScreen> {
               CustomTextField(
                   controller: commentController, hintText: 'Comment'),
               SizedBox(height: 10),
-              _buildExampleContainer(
-                  'First Example', example1EnController, example1UzController),
-              SizedBox(height: 10),
-              _buildExampleContainer(
-                  'Second Example', example2EnController, example2UzController),
-              SizedBox(height: 10),
-              _buildExampleContainer(
-                  'Third Example', example3EnController, example3UzController),
+
+              // Misollar
+              Column(
+                children: List.generate(exampleControllers.length, (index) {
+                  return Column(
+                    children: [
+                      _buildExampleContainer(index),
+                      SizedBox(height: 10),
+                    ],
+                  );
+                }),
+              ),
+
+              // "+" Tugma
+              if (exampleControllers.length < 3)
+                ElevatedButton.icon(
+                  onPressed: _addExample,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.buttonColor,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  icon: Icon(Icons.add, color: Colors.white),
+                  label: Text(
+                    'Add Example',
+                    style: AppStyle.fontStyle.copyWith(color: Colors.white),
+                  ),
+                ),
+
               SizedBox(height: 20),
               Container(
                 width: double.infinity,
@@ -214,8 +213,7 @@ class _AddWordScreenState extends State<AddWordScreen> {
     );
   }
 
-  Widget _buildExampleContainer(String title,
-      TextEditingController enController, TextEditingController uzController) {
+  Widget _buildExampleContainer(int index) {
     return Container(
       decoration: BoxDecoration(
         color: AppColors.foregroundColor,
@@ -226,15 +224,31 @@ class _AddWordScreenState extends State<AddWordScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            title,
-            style: AppStyle.fontStyle.copyWith(
-              color: AppColors.dividerColor,
-              fontSize: 16,
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Example ${index + 1}',
+                style: AppStyle.fontStyle.copyWith(
+                  color: AppColors.dividerColor,
+                  fontSize: 16,
+                ),
+              ),
+              if (exampleControllers.length > 1)
+                IconButton(
+                  icon: Icon(Icons.remove_circle, color: Colors.red),
+                  onPressed: () => _removeExample(index),
+                ),
+            ],
           ),
-          CustomTextField(controller: enController, hintText: 'English'),
-          CustomTextField(controller: uzController, hintText: 'Uzbek'),
+          CustomTextField(
+            controller: exampleControllers[index]['english']!,
+            hintText: 'English',
+          ),
+          CustomTextField(
+            controller: exampleControllers[index]['uzbek']!,
+            hintText: 'Uzbek',
+          ),
         ],
       ),
     );

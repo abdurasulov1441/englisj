@@ -1,10 +1,10 @@
 plugins {
     id "com.android.application"
-    // START: FlutterFire Configuration
+  
     id 'com.google.gms.google-services'
-    // END: FlutterFire Configuration
+    
     id "kotlin-android"
-    // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
+  
     id "dev.flutter.flutter-gradle-plugin"
 }
 
@@ -32,8 +32,8 @@ android {
         applicationId = "uz.english.quiz" 
         minSdk = 23
         targetSdk = 34 
-        versionCode = 3
-        versionName = "3.0"
+        versionCode = 4
+        versionName = "3.1"
     }
      signingConfigs {
         release {
@@ -46,8 +46,7 @@ android {
 
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
+        
             signingConfig = signingConfigs.release
         }
     }
